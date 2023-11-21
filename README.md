@@ -1,1 +1,1 @@
-# PHP-Leaflet-PostgreSQL-Mobile développé Jérôme ASSIE
+# PHP-Leaflet-PostgreSQL-Mobile-PostGis-jQuery-HTML-CSS
