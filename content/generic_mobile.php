@@ -22,7 +22,9 @@
         <meta name="apple-mobile-web-app-title" content="Generic Data Collection">
         
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <title>Generic Data Collection</title>
+
+        <meta name="theme-color" content="#764ABC"/>
+        <title>Mobile Sireo POC</title>
         <link rel="stylesheet" href="src/leaflet.css">
         <link rel="stylesheet" href="src/css/bootstrap.css">
         <link rel="stylesheet" href="src/plugins/Leaflet.PolylineMeasure.css">
@@ -32,6 +34,9 @@
         <link rel="stylesheet" href="src/plugins/MarkerCluster.css">
         <link rel="stylesheet" href="src/plugins/MarkerCluster.Default.css">
         <link rel="stylesheet" href="generic_mobile_resources/css_generic_mobile.css">
+
+        <!-- Manifest File link -->
+        <link rel="manifest" href="./manifest.json">
         
         <script src="src/leaflet.js"></script>
         <script src="src/jquery-3.3.1.min.js"></script>
@@ -687,6 +692,23 @@
                 $(".stream-controls").hide();
                 $("#btnLayers").attr("disabled", false);
             });
+
+            // PWA Configuration
+            window.addEventListener('load', () => {
+                registerSW();
+                });
+                // Register the Service Worker
+                async function registerSW() {
+                if ('serviceWorker' in navigator) {
+                    try {
+                    console.log('Service Worker enregistré avec succès:');
+                    await navigator.serviceWorker.register('./service-worker.js');
+                    }
+                    catch (e) {
+                        console.error('Erreur lors de l\'enregistrement du Service Worker:', e);
+                    }
+                }
+            }
             
         </script>
     </body>
