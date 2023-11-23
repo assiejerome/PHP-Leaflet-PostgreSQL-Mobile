@@ -19,7 +19,7 @@
     //    $pdo = new PDO($dsn, $user, $pass, $opt);
     
     $root_directory = "webmap401";
-    $from_email = "ajer_coolio@yahoo.fr";
-    $reply_email = "ajer_coolio@yahoo.fr";
+    $from_email = "toto@live.fr";
+    $reply_email = "toto@live.fr";
     include "php_functions.php";
 ?>
