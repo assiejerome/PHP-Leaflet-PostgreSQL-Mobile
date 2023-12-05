@@ -28,6 +28,7 @@
         <link rel="stylesheet" href="src/leaflet.css">
         <link rel="stylesheet" href="src/css/bootstrap.css">
         <link rel="stylesheet" href="src/plugins/Leaflet.PolylineMeasure.css">
+        <link rel="stylesheet" href="src/plugins/leaflet-routing-machine.css">
         <link rel="stylesheet" href="src/plugins/easy-button.css">
         <link rel="stylesheet" href="src/css/font-awesome.min.css">
         <link rel="stylesheet" href="src/plugins/leaflet.awesome-markers.css">
@@ -38,9 +39,11 @@
         <!-- Manifest File link -->
         <link rel="manifest" href="./manifest.json">
         
+                
         <script src="src/leaflet.js"></script>
         <script src="src/jquery-3.3.1.min.js"></script>
         <script src="src/plugins/Leaflet.PolylineMeasure.js"></script>
+        <script src="src/plugins/leaflet-routing-machine.js"></script>
         <script src="src/plugins/easy-button.js"></script>
         <script src="src/plugins/leaflet-providers.js"></script>
         <script src="src/plugins/leaflet.awesome-markers.min.js"></script>
@@ -353,12 +356,13 @@
             var intInfo;
             var lyrNavTarget;
             var lyrNavLine;
+            var ctlRoutingMaching;
             
             $(document).ready(function(){
                 
                 //  ********* Map Initialization ****************
                 
-                mymap = L.map('divMap', {center:[43.6186873, 7.0554462], zoom:13});
+                mymap = L.map('divMap', {center:[43.6186873, 7.0554462], zoom:8});
                 mymap.locate();
                 
                 ctlScale = L.control.scale({position:'bottomright', metric:false, maxWidth:200}).addTo(mymap);
@@ -392,6 +396,13 @@
                 ctlLayers = L.control.layers(objBasemaps, objOverlays).addTo(mymap);
                 
                 ctlMeasure = L.control.polylineMeasure({position:'topright'}).addTo(mymap);
+
+                ctlRoutingMaching = L.Routing.control({
+                    waypoints: [
+                        L.latLng(43.620755, 7.05931),
+                        L.latLng(43.620727, 7.058084)
+                    ]
+                }).addTo(mymap);
                 
                 // ************ Location Events **************
                 
@@ -418,8 +429,12 @@
                         var flt=100000;
                     }
                     if (e.accuracy<flt){
-                        posCurrent=randomizePos(e);
+                        // posCurrent=randomizePos(e);
+                        posCurrent=e;
                         posLastTime=new Date();
+
+                        // Centrer la carte sur la nouvelle position détectée
+                        // mymap.setView(e.latlng, mymap.getZoom());
                     } else {
                         if (posCurrent) {
                             posCurrent.accuracy=e.accuracy;
