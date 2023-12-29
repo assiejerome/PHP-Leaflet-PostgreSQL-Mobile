@@ -35,6 +35,8 @@
         <link rel="stylesheet" href="src/plugins/MarkerCluster.css">
         <link rel="stylesheet" href="src/plugins/MarkerCluster.Default.css">
         <link rel="stylesheet" href="generic_mobile_resources/css_generic_mobile.css">
+        <!-- Leaflet Draw CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css"/>
 
         <!-- Manifest File link -->
         <link rel="manifest" href="./manifest.json">
@@ -49,6 +51,8 @@
         <script src="src/plugins/leaflet.awesome-markers.min.js"></script>
         <script src="src/plugins/leaflet.markercluster.js"></script>
         <script src="src/plugins/leaflet.geometryutil.js"></script>
+        <!-- Leaflet Draw JS -->
+        <script src="https://unpkg.com/leaflet-draw/dist/leaflet.draw.js"></script>
         <script src="js/general_functions.js"></script>
         <script src="js/general_editing.js"></script>
         <script src="generic_mobile_resources/js_generic_mobile.js"></script>
@@ -72,6 +76,7 @@
         </div>
         <div id="divMap" class="col-xs-12">
             <div id="divCross"><i class="fa fa-crosshairs fa-2x"></i></div>
+            <div id="divPlus"><i class="fa fa-plus-circle fa-3x"></i></div>
         </div>
         <div id="divFooter" class="col-xs-12">
             <div class="btn-group btn-group-justified">
@@ -307,6 +312,15 @@
                 </div>
             </div>
         </div>
+        <div id="divMenuPlus" class="modalAdd">
+            <div id="layers">
+                <table class="table">
+                    <tr id="addPoint"><td>Ajouter un point</td></tr>
+                    <tr id="addLine"><td>Ajouter une ligne</td></tr>
+                    <tr id="addPoly"><td>Ajouter un polygone</td></tr>
+                </table>
+            </div>
+        </div>
         
         <script>
             var user;
@@ -362,7 +376,7 @@
                 
                 //  ********* Map Initialization ****************
                 
-                mymap = L.map('divMap', {center:[43.6186873, 7.0554462], zoom:8});
+                mymap = L.map('divMap', {center:[43.6186873, 7.0554462], zoom:13});
                 mymap.locate();
                 
                 ctlScale = L.control.scale({position:'bottomright', metric:false, maxWidth:200}).addTo(mymap);
@@ -397,12 +411,48 @@
                 
                 ctlMeasure = L.control.polylineMeasure({position:'topright'}).addTo(mymap);
 
-                ctlRoutingMaching = L.Routing.control({
-                    waypoints: [
-                        L.latLng(43.620755, 7.05931),
-                        L.latLng(43.620727, 7.058084)
-                    ]
-                }).addTo(mymap);
+                // ctlRoutingMaching = L.Routing.control({
+                //     waypoints: [
+                //         L.latLng(43.620755, 7.05931),
+                //         L.latLng(43.620727, 7.058084)
+                //     ]
+                // }).addTo(mymap);
+
+
+                // Initialize Leaflet Draw
+                var drawnItems = new L.FeatureGroup();
+                mymap.addLayer(drawnItems);
+
+                var drawControl = new L.Control.Draw({
+                    draw: {
+                        polyline: true,
+                        polygon: true,
+                        circle: false,
+                        rectangle: true,
+                        marker: false
+                    },
+                    edit: {
+                        featureGroup: drawnItems,
+                        remove: true
+                    }
+                });
+                mymap.addControl(drawControl);
+
+                // Handle when a user finishes drawing a polyline
+                mymap.on('draw:created', function (e) {
+                    var type = e.layerType,
+                        layer = e.layer;
+
+                    if (type === 'polyline') {
+                        drawnItems.addLayer(layer);
+
+                        // Create a routing control using the drawn polyline
+                        L.Routing.control({
+                            waypoints: layer.getLatLngs(),
+                            routeWhileDragging: true
+                        }).addTo(mymap);
+                    }
+                });
                 
                 // ************ Location Events **************
                 
@@ -477,20 +527,29 @@
             });
             
             $("#btnMap").click(function(){
+                $(".modalAdd").hide();
                 openSubScreen();
             })
             $("#btnInfo").click(function(){
+                $(".modalAdd").hide();
                 openSubScreen("divInfo");
             })
             $("#btnLayers").click(function(){
+                $(".modalAdd").hide();
                 openSubScreen("divLayers");
             })
             $("#btnPoints").click(function(){
+                $(".modalAdd").hide();
                 populatePoints();
                 openSubScreen("divPoints");
             })
             $("#btnSettings").click(function(){
+                $(".modalAdd").hide();
                 openSubScreen("divSettings");
+            })
+            $("#divPlus").click(function(){
+                $("#divMenuPlus").show();
+                openAddMenu("divMenuPlus");
             })
             
             // **** Settings event handlers
@@ -584,6 +643,17 @@
                 $("#mode").html("SCREEN CAPTURE");
                 $("#btnLayers").attr("disabled", true);
             });
+
+            // Ajout d'un piont depuis le bouton plus
+            $("#addPoint").click(function(){
+                stopAutolocate();
+                openSubScreen();
+                $(".stream-controls").hide();
+                $("#divMenuPlus").hide();
+                $("#btnStreamStop").show();
+                $("#mode").html("SCREEN CAPTURE");
+                $("#btnLayers").attr("disabled", true);
+            });
             // ***** generic_line event handlers
             
             $("#gen_line_collect").click(function(){
@@ -623,6 +693,32 @@
                 $("#btnStreamCrosshair").show();
                 $("#btnStreamStop").show();
                 $("#mode").html("VERTEX COLLECTION");
+                $("#btnLayers").attr("disabled", true);
+            });
+
+            // Ajout de ligne depuis le bouton plus
+            $("#addLine").click(function(){
+                openSubScreen();
+                lyrVertices.clearLayers();
+                $(".stream-controls").hide();
+                $("#divMenuPlus").hide();
+                $("#btnStreamGPS").show();
+                $("#btnStreamCrosshair").show();
+                $("#btnStreamStop").show();
+                $("#mode").html("ADD LINE");
+                $("#btnLayers").attr("disabled", true);
+            });
+
+            // Ajout de polygone depuis le bouton plus
+            $("#addPoly").click(function(){
+                openSubScreen();
+                lyrVertices.clearLayers();
+                $(".stream-controls").hide();
+                $("#divMenuPlus").hide();
+                $("#btnStreamGPS").show();
+                $("#btnStreamCrosshair").show();
+                $("#btnStreamStop").show();
+                $("#mode").html("ADD POLYGON");
                 $("#btnLayers").attr("disabled", true);
             });
             

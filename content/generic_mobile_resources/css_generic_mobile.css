@@ -27,6 +27,18 @@
   margin-left: -11px;
 }
 
+#divPlus {
+  z-index: 3000;
+  color: chocolate;
+  position: absolute;
+  /* top: 97%; */
+  /* left: 5%; */
+  bottom: 5px;
+  left: 25px;
+  /* margin-top: -11px; */
+  /* margin-left: -11px; */
+}
+
 .btn {
   margin-top: 2px;
 }
@@ -86,6 +98,22 @@
   color: saddlebrown;
 }
 
+/* add Modal Content */
+.modalAdd {
+  z-index: 9999;
+  /* height: 30%; */
+  width: 40%;
+  display: none;
+  overflow-y: auto;
+  background-color: #f3f4f6;
+  color: saddlebrown;
+  position: absolute;
+  bottom: 110px;
+  left: 25px;
+  border-radius: 5px;
+  border: 1px solid saddlebrown;
+}
+
 .sub-header {
   color: antiquewhite;
   /* background-color: saddlebrown; */
@@ -122,4 +150,8 @@ input[type="range"]::-webkit-slider-thumb {
     color-stop(50%, saddlebrown),
     color-stop(100%, #aaa)
   );
+}
+
+.paddingTop {
+  padding-top: 20px;
 }

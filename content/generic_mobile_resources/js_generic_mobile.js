@@ -3,6 +3,11 @@ function openSubScreen(scrn) {
   $("#" + scrn).show();
 }
 
+function openAddMenu(scrn) {
+  // $(".modalAdd").show();
+  $("#" + scrn).show();
+}
+
 function randomizePos(e) {
   var offsetX = Math.random() * 0.005 - 0.0025;
   var offsetY = Math.random() * 0.005 - 0.0025;
